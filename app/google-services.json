@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "176702502162",
+    "firebase_url": "https://mediauploader-d16e0.firebaseio.com",
+    "project_id": "mediauploader-d16e0",
+    "storage_bucket": "mediauploader-d16e0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176702502162:android:7399dea90e5db737",
+        "android_client_info": {
+          "package_name": "com.example.sofi.mediauploader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176702502162-n63hquurqfsr50p55kp782o22u0l93a0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sofi.mediauploader",
+            "certificate_hash": "2f06d77b75188b4a5abb4e519eddda72ee08c36b"
+          }
+        },
+        {
+          "client_id": "176702502162-f4pq78vop85g5t00ckfu2mqvdgmd0hp5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE2YOUCWT94CE2uO6WFVrV0FekygE9nwY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176702502162-f4pq78vop85g5t00ckfu2mqvdgmd0hp5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
