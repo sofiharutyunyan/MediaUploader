@@ -71,10 +71,8 @@ public class MainActivity extends AppCompatActivity {
         if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
             if (shouldShowRequestPermissionRationale(
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Explain to the user why we need to read the contacts
             }
 
             requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
@@ -97,14 +95,7 @@ public class MainActivity extends AppCompatActivity {
             uri = Uri.parse("file://" + filePaths.get(i));
             StorageReference fileToUpload = mStorage.child("Images").child(uri.getLastPathSegment());
             fileToUpload.putFile(uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
+                    .addOnSuccessListener(taskSnapshot -> Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show()).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(MainActivity.this, "Something went wrong, please check your internet connection and try again", Toast.LENGTH_SHORT).show();
@@ -137,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Uri uri = Uri.fromFile(new File(path));
                 m.setUri(uri);
-                Log.e("uris", uri.toString());
                 media.add(m);
                 Utils.resizeAndCompressImageBeforeSend(this, path, path.substring(path.lastIndexOf("/") + 1));
             }
@@ -147,13 +137,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     private void updateView(ArrayList<Media> media) {
         rv.setAdapter(new MediaListAdapter(this, media));
         mUploadBtn.setVisibility(View.VISIBLE);
         mSelectPhotoBtn.setVisibility(View.GONE);
     }
-
-
-
 }
