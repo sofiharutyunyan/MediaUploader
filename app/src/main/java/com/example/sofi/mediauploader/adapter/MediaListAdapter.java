@@ -14,15 +14,18 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.MyViewHolder> {
 
     Context c;
-    ArrayList<Media> media;
+    ArrayList<Media> mediaList;
 
-    public MediaListAdapter(Context c, ArrayList<Media> media) {
+    public MediaListAdapter(Context c, ArrayList<Media> mediaList) {
         this.c = c;
-        this.media = media;
+        this.mediaList = mediaList;
     }
 
     @Override
@@ -34,28 +37,28 @@ public class MediaListAdapter extends RecyclerView.Adapter<MediaListAdapter.MyVi
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        Media s= media.get(position);
+        Media media= mediaList.get(position);
 
-        holder.nameTxt.setText(s.getName());
-        Picasso.with(c).load(s.getUri()).placeholder(R.drawable.placeholder).into(holder.img);
+        holder.nameTxt.setText(media.getName());
+        Picasso.with(c).load(media.getUri()).placeholder(R.drawable.placeholder).into(holder.img);
     }
 
     @Override
     public int getItemCount(){
-        return media.size();
+        return mediaList.size();
     }
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.file_name_txt)
         TextView nameTxt;
+        @BindView(R.id.uploadedImg)
         ImageView img;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-
-            nameTxt= (TextView) itemView.findViewById(R.id.file_name_txt);
-            img= (ImageView) itemView.findViewById(R.id.uploadedImg);
+            ButterKnife.bind(this, itemView);
 
         }
     }

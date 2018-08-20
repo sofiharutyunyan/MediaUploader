@@ -5,28 +5,61 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Selected Photos and Upload them in Firebase"
-        android:textAlignment="center"
-        android:textSize="16sp" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/select_photo_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="16dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="Select Photo"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="italic" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <include layout="@layout/content_main" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Selected Photos and Upload them in Firebase"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/select_photo_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="16dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Select Photo"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="italic" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/upload_photo_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_margin="16dp"
+                android:background="@color/colorPrimary"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Upload"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>

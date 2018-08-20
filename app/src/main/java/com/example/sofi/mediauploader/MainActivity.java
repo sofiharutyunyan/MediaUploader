@@ -1,68 +1,112 @@
 package com.example.sofi.mediauploader;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.sofi.mediauploader.adapter.MediaListAdapter;
 import com.example.sofi.mediauploader.data.Media;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import droidninja.filepicker.FilePickerBuilder;
 import droidninja.filepicker.FilePickerConst;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 11;
+    @BindView(R.id.rv)
     RecyclerView rv;
-    ArrayList<String> filePaths = new ArrayList<>();
+    @BindView(R.id.select_photo_btn)
     Button mSelectPhotoBtn;
+    @BindView(R.id.upload_photo_btn)
+    Button mUploadBtn;
 
+    ArrayList<String> filePaths = new ArrayList<>();
+
+    StorageReference mStorage;
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        rv = (RecyclerView) findViewById(R.id.rv);
+        ButterKnife.bind(this);
         rv.setLayoutManager(new LinearLayoutManager(this));
+        checkStoragePermission();
+        mStorage = FirebaseStorage.getInstance().getReference();
 
-        mSelectPhotoBtn = (Button) findViewById(R.id.select_photo_btn);
-        mSelectPhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                filePaths.clear();
 
-                if (mSelectPhotoBtn.getText().equals("Upload")) {
-//                            StorageReference fileToUpload = mStorage.child("Images").child(single.getLastPathSegment());
-//
-//                            fileToUpload.putFile(single).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                @Override
-//                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//
-//                                    Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
-//
-//                                }
-//                            });
-                } else {
-                    FilePickerBuilder.getInstance().setMaxCount(5)
-                            .setSelectedFiles(filePaths)
-                            .setActivityTheme(R.style.AppTheme)
-                            .pickPhoto(MainActivity.this);
-                }
+    }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void checkStoragePermission() {
+        if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (shouldShowRequestPermissionRationale(
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Explain to the user why we need to read the contacts
             }
-        });
 
+            requestPermissions(new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        }
+    }
+
+    @OnClick(R.id.select_photo_btn)
+    void selectPhoto() {
+        FilePickerBuilder.getInstance().setMaxCount(5)
+                .setSelectedFiles(filePaths)
+                .setActivityTheme(R.style.AppTheme)
+                .pickPhoto(MainActivity.this);
+    }
+
+    @OnClick(R.id.upload_photo_btn)
+    void uploadPhoto() {
+        Uri uri = null;
+        for (int i = 0; i < filePaths.size(); i++) {
+            uri = Uri.parse(filePaths.get(i));
+
+            StorageReference fileToUpload = mStorage.child("Images").child(uri.getLastPathSegment());
+
+            fileToUpload.putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(MainActivity.this, "Something went wrong, please check your internet connection and try again", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -87,16 +131,23 @@ public class MainActivity extends AppCompatActivity {
                 m = new Media();
                 m.setName(path.substring(path.lastIndexOf("/") + 1));
 
-                m.setUri(Uri.fromFile(new File(path)));
+                Uri uri = Uri.fromFile(new File(path));
+                m.setUri(uri);
                 media.add(m);
 
             }
 
-            rv.setAdapter(new MediaListAdapter(this, media));
+            updateView(media);
             Toast.makeText(MainActivity.this, "Total selected items = " + String.valueOf(media.size()), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateView(ArrayList<Media> media) {
+        rv.setAdapter(new MediaListAdapter(this, media));
+        mUploadBtn.setVisibility(View.VISIBLE);
+        mSelectPhotoBtn.setVisibility(View.GONE);
     }
 
 }
