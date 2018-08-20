@@ -1,16 +1,20 @@
 package com.example.sofi.mediauploader;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -23,7 +27,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -88,19 +94,17 @@ public class MainActivity extends AppCompatActivity {
     void uploadPhoto() {
         Uri uri = null;
         for (int i = 0; i < filePaths.size(); i++) {
-            uri = Uri.parse(filePaths.get(i));
-
+            uri = Uri.parse("file://" + filePaths.get(i));
             StorageReference fileToUpload = mStorage.child("Images").child(uri.getLastPathSegment());
-
             fileToUpload.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
 
-                }
-            }).addOnFailureListener(new OnFailureListener() {
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(MainActivity.this, "Something went wrong, please check your internet connection and try again", Toast.LENGTH_SHORT).show();
@@ -112,11 +116,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
             case FilePickerConst.REQUEST_CODE:
                 if (resultCode == RESULT_OK && data != null) {
                     getFilesFromStorage(data);
-                    mSelectPhotoBtn.setText("Upload");
                 }
         }
     }
@@ -133,21 +137,23 @@ public class MainActivity extends AppCompatActivity {
 
                 Uri uri = Uri.fromFile(new File(path));
                 m.setUri(uri);
+                Log.e("uris", uri.toString());
                 media.add(m);
-
+                Utils.resizeAndCompressImageBeforeSend(this, path, path.substring(path.lastIndexOf("/") + 1));
             }
-
             updateView(media);
-            Toast.makeText(MainActivity.this, "Total selected items = " + String.valueOf(media.size()), Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void updateView(ArrayList<Media> media) {
         rv.setAdapter(new MediaListAdapter(this, media));
         mUploadBtn.setVisibility(View.VISIBLE);
         mSelectPhotoBtn.setVisibility(View.GONE);
     }
+
+
 
 }
