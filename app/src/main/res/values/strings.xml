@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MediaUploader</string>
+    <string name="success_message">Congratulations, your photos are saved successfully.</string>
+    <string name="error_message">Something went wrong, please check your internet connection and try again</string>
 </resources>
